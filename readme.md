@@ -1,3 +1,9 @@
+# READ ME
+This Readme file covers the AWS full-stack application deployment session with Chilet Okeke. 
+
+Session notes and documentation of steps taken during the session will be included. Future updates may be implemented if necessary.
+
+
 # Brief introduction of terms
 
 * VPC - virtual private cloud. VPC is a network created for your project or organization in aws. VPC will handle the network requirements e.g subnets and ip addresses for your resources.
