@@ -160,7 +160,7 @@ Cost-effective for serving static assets.
 
 4. Set bucket policy/public access to allow GetObject (or later secure via CloudFront).
 
-* Note the S3 website endpoint URL (e.g., http://aws-club-bucket02.s3-website-us-east-1.amazonaws.com).
+* Note the S3 website endpoint URL (e.g., http://aws-uniuyo-bucket01.s3-website-us-east-1.amazonaws.com/).
 
 # Setup custom DNS and routing 
 ### CDN with Cloudfront
@@ -194,7 +194,7 @@ Route 53 manages custom domains (DNS) and routing to AWS resources.
 
 2. Add an A record (alias) → point it to the CloudFront distribution.
 
-3. Verify domain registration/DNS propagation.
+3. Wait between 5-60mins then Verify domain registration/DNS propagation.
 
 # Deploy Backend API to EC2
 Why not deploy backend to S3?
@@ -205,15 +205,43 @@ S3 only serves static files, not dynamic APIs (S3 cannot handle server-side proc
 
 1. On your console, naviagte to EC2 → Launch an EC2 instance (Select Ubuntu).
 
-2. Select your VPC, subnet, and security group (allow HTTP/HTTPS, SSH). Launch the instance (Give it a minute or two to get ready)
+2. Select your VPC, subnet, and security group (allow HTTP/HTTPS, SSH and custom on port 3001 for your SG). Launch the instance (Give it a minute or two to get ready)
 
 3. Connect to your EC2 instance via EC2 Instance Connect (or SSH).
 
 4. Once inside your EC2 instance, install your runtime (e.g Node.js.) and clone your GitHub repo:
 
 ```bash
-git clone https://github.com/chilet-okeke/ec2-backend.git
-cd app && npm install && npm start
+sudo apt update
+sudo apt install -y git
+
+#confirm that git is installed
+git --version
+
+# Clone the repo
+git clone https://github.com/chilet-okeke/aws-club-backend.git 
+
+#cd into the repo folder
+cd aws-club-backend
+
+#install depndencies
+npm install
+
+#edit the origin url
+vim server.js
+
+#Update cors from '*' to your origin url to restrict access to the S3 bucket
+app.use(cors({
+  origin: 'http://aws-uniuyo-bucket01.s3-website-us-east-1.amazonaws.com'  // Your S3 URL
+}));
+
+
+#Start server
+npm start
+
+#Load the public url of you ec2 instance on your browser or curl the url  
+http://<ec2-public-ip>:3001
+curl <ec2-public-ip>
 
 ```
 * Note: Step 4 can be improved by implementing a startup script which will automatically execute these commands, reducing the need for you to connect to the instance manually. This can prove to be very helpful at scale.
